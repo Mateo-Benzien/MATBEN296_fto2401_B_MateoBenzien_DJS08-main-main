@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import '../App.css';
+import React, { useState, useEffect } from 'react';
+import '../App.css'; // Adjust the path accordingly
 
 const AudioPlayer = ({ currentEpisode: propCurrentEpisode }) => {
   const [shows, setShows] = useState([]);
@@ -9,8 +9,7 @@ const AudioPlayer = ({ currentEpisode: propCurrentEpisode }) => {
   const [paused, setPaused] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-
-  const audioRef = useRef(null);
+  const [audioPlaying, setAudioPlaying] = useState(false); // State to track if audio is playing
 
   useEffect(() => {
     const fetchShows = async () => {
@@ -36,25 +35,41 @@ const AudioPlayer = ({ currentEpisode: propCurrentEpisode }) => {
   }, []);
 
   useEffect(() => {
-    const audioElement = audioRef.current;
+    const audioElement = document.getElementById('audio-element');
     if (audioElement) {
-      const updateTime = () => {
-        setCurrentTime(audioElement.currentTime);
-      };
-
-      const updateMetadata = () => {
-        setDuration(audioElement.duration);
-      };
-
       audioElement.addEventListener('timeupdate', updateTime);
-      audioElement.addEventListener('loadedmetadata', updateMetadata);
+      audioElement.addEventListener('loadedmetadata', () => {
+        setDuration(audioElement.duration);
+      });
 
-      return () => {
-        audioElement.removeEventListener('timeupdate', updateTime);
-        audioElement.removeEventListener('loadedmetadata', updateMetadata);
-      };
+      // Set state for audio playing or paused
+      audioElement.addEventListener('play', () => setAudioPlaying(true));
+      audioElement.addEventListener('pause', () => setAudioPlaying(false));
     }
+
+    return () => {
+      if (audioElement) {
+        audioElement.removeEventListener('timeupdate', updateTime);
+        audioElement.removeEventListener('play', () => setAudioPlaying(true));
+        audioElement.removeEventListener('pause', () => setAudioPlaying(false));
+      }
+    };
   }, [currentEpisode]);
+
+  useEffect(() => {
+    if (propCurrentEpisode) {
+      setCurrentEpisode(propCurrentEpisode);
+      setPaused(false);
+    }
+  }, [propCurrentEpisode]);
+
+  // Function to update the current time of the audio
+  const updateTime = () => {
+    const audioElement = document.getElementById('audio-element');
+    if (audioElement) {
+      setCurrentTime(audioElement.currentTime);
+    }
+  };
 
   const fetchShowDetails = async (showId, seasonId) => {
     try {
@@ -69,33 +84,34 @@ const AudioPlayer = ({ currentEpisode: propCurrentEpisode }) => {
       }
       setCurrentSeason(season);
       setEpisodes(season.episodes);
-      setCurrentEpisode(season.episodes[0] || null); // Ensure currentEpisode is null if no episodes
+      setCurrentEpisode(season.episodes[0] || null);
     } catch (error) {
       console.error('Error fetching show details:', error);
     }
   };
 
   const playPauseEpisode = () => {
-    const audioElement = audioRef.current;
+    const audioElement = document.getElementById('audio-element');
     if (audioElement) {
       if (paused) {
         audioElement.play();
+        setPaused(false);
       } else {
         audioElement.pause();
+        setPaused(true);
       }
-      setPaused(!paused);
     }
   };
 
   const fastForward = () => {
-    const audioElement = audioRef.current;
+    const audioElement = document.getElementById('audio-element');
     if (audioElement) {
       audioElement.currentTime += 10;
     }
   };
 
   const rewind = () => {
-    const audioElement = audioRef.current;
+    const audioElement = document.getElementById('audio-element');
     if (audioElement) {
       audioElement.currentTime -= 10;
     }
@@ -133,19 +149,27 @@ const AudioPlayer = ({ currentEpisode: propCurrentEpisode }) => {
     }
   };
 
+  // Prompt user before leaving the page if audio is playing
   useEffect(() => {
-    if (propCurrentEpisode) {
-      setCurrentEpisode(propCurrentEpisode);
-      setPaused(false);
-    }
-  }, [propCurrentEpisode]);
+    const handleBeforeUnload = (event) => {
+      if (audioPlaying) {
+        const confirmationMessage = 'Are you sure you want to leave? Your audio is still playing.';
+        event.returnValue = confirmationMessage; // Standard way of setting confirmation message in most browsers
+        return confirmationMessage; // Required for some browsers
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [audioPlaying]);
 
   return (
     <div className="Player">
       {currentEpisode ? (
         <div>
-          <div className="EpisodeTitle">{currentEpisode.title}</div>
-          <PlayerProgress currentTime={currentTime} duration={duration} />
           <div className="PlayerControls">
             <button onClick={skipToPrevious}>⟸</button>
             <button onClick={rewind}>⟲</button>
@@ -153,12 +177,12 @@ const AudioPlayer = ({ currentEpisode: propCurrentEpisode }) => {
             <button onClick={fastForward}>⟳</button>
             <button onClick={skipToNext}>⟹</button>
           </div>
-          <audio ref={audioRef} src={currentEpisode.file} />
+          <div className="EpisodeTitle">{currentEpisode.title}</div>
+          <PlayerProgress currentTime={currentTime} duration={duration} />
+          <audio id="audio-element" src={currentEpisode.file} />
         </div>
       ) : (
         <div>
-          <div className="EpisodeTitle">PLACEHOLDER AUDIO TRACK</div>
-          <PlayerProgress currentTime={currentTime} duration={duration} />
           <div className="PlayerControls">
             <button onClick={skipToPrevious}>⟸</button>
             <button onClick={rewind}>⟲</button>
@@ -166,7 +190,9 @@ const AudioPlayer = ({ currentEpisode: propCurrentEpisode }) => {
             <button onClick={fastForward}>⟳</button>
             <button onClick={skipToNext}>⟹</button>
           </div>
-          <audio ref={audioRef} src="https://podcast-api.netlify.app/placeholder-audio.mp3" />
+          <div className="EpisodeTitle">PLACEHOLDER AUDIO TRACK</div>
+          <PlayerProgress currentTime={currentTime} duration={duration} />
+          <audio id="audio-element" src={"https://podcast-api.netlify.app/placeholder-audio.mp3"} />
         </div>
       )}
     </div>

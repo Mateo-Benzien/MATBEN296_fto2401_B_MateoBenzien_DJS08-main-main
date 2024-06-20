@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import '../App.css';
 
@@ -102,69 +102,75 @@ const PodcastDetail = ({ setCurrentEpisode }) => {
   }
 
   return (
-    <div className="PodcastDetailContainer" style={{ paddingTop: '50px' }}>
-      <h2>{podcast.title}</h2>
-      <img src={podcast.image} alt={podcast.title} className="PodcastDetailImage" />
-      <div className="PodcastDetailDescription">{podcast.description}</div>
-
-      <div className="SeasonSelector">
-        <button onClick={() => setSeasonDropdownOpen(!seasonDropdownOpen)} className="SeasonButton">
-          {podcast.seasons[selectedSeason].title}
-          <span className="DropdownArrow">{seasonDropdownOpen ? '▲' : '▼'}</span>
-        </button>
-        {seasonDropdownOpen && (
-          <div className="SeasonDropdown">
-            {podcast.seasons.map((season, index) => (
-              <button
-                key={season.id}
-                onClick={() => handleSeasonChange(index)}
-                className={`SeasonButton ${index === selectedSeason ? 'active' : ''}`}
-              >
-                {season.title}
-              </button>
-            ))}
-          </div>
-        )}
+    <div className="App">
+      <div className="Sidebar">
+        <Link to="/" className="SidebarLink">Home</Link>
+        <Link to="/favorites" className="SidebarLink">Favorites</Link>
       </div>
+      <div className="MainContent" style={{ paddingTop: '50px' }}>
+        <h2>{podcast.title}</h2>
+        <img src={podcast.image} alt={podcast.title} className="PodcastDetailImage" />
+        <div className="PodcastDetailDescription">{podcast.description}</div>
 
-      <div className="PodcastSeason">
-        <h3>{podcast.seasons[selectedSeason].title}</h3>
-        {podcast.seasons[selectedSeason].previewImage && (
-          <img
-            src={podcast.seasons[selectedSeason].previewImage}
-            alt={`Preview for ${podcast.seasons[selectedSeason].title}`}
-            className="SeasonPreviewImage"
-          />
-        )}
-        <div className="EpisodeList">
-          <div className="EpisodesHeader">
-            <h4>Episodes:</h4>
-          </div>
-          {podcast.seasons[selectedSeason].episodes.length > 0 ? (
-            podcast.seasons[selectedSeason].episodes.map((episode, index) => (
-              <div
-                key={episode.id}
-                className="Episode"
-                onClick={() => setCurrentEpisode(episode)}
-              >
-                <span className="EpisodeNumber">{index + 1}.</span>
-                <span className="EpisodeTitle">{episode.title}</span>
+        <div className="SeasonSelector">
+          <button onClick={() => setSeasonDropdownOpen(!seasonDropdownOpen)} className="SeasonButton">
+            {podcast.seasons[selectedSeason].title}
+            <span className="DropdownArrow">{seasonDropdownOpen ? '▲' : '▼'}</span>
+          </button>
+          {seasonDropdownOpen && (
+            <div className="SeasonDropdown">
+              {podcast.seasons.map((season, index) => (
                 <button
-                  className="FavoriteButton"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFavorite(episode);
-                  }}
+                  key={season.id}
+                  onClick={() => handleSeasonChange(index)}
+                  className={`SeasonButton ${index === selectedSeason ? 'active' : ''}`}
                 >
-                  {isFavorite(episode.id) ? 'Favorited' : 'Add to Favorites'}
+                  {season.title}
                 </button>
-              </div>
-            ))
-          ) : (
-            <div className="Episode">
-              <span className="EpisodeTitle">PLACEHOLDER AUDIO TRACK</span>
+              ))}
             </div>
           )}
+        </div>
+
+        <div className="PodcastSeason">
+          <h3>{podcast.seasons[selectedSeason].title}</h3>
+          {podcast.seasons[selectedSeason].previewImage && (
+            <img
+              src={podcast.seasons[selectedSeason].previewImage}
+              alt={`Preview for ${podcast.seasons[selectedSeason].title}`}
+              className="SeasonPreviewImage"
+            />
+          )}
+          <div className="EpisodeList">
+            <div className="EpisodesHeader">
+              <h4>Episodes:</h4>
+            </div>
+            {podcast.seasons[selectedSeason].episodes.length > 0 ? (
+              podcast.seasons[selectedSeason].episodes.map((episode, index) => (
+                <div
+                  key={episode.id}
+                  className="Episode"
+                  onClick={() => setCurrentEpisode(episode)}
+                >
+                  <span className="EpisodeNumber">{index + 1}.</span>
+                  <span className="EpisodeTitle">{episode.title}</span>
+                  <button
+                    className="FavoriteButton"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavorite(episode);
+                    }}
+                  >
+                    {isFavorite(episode.id) ? 'Favorited' : 'Add to Favorites'}
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div className="Episode">
+                <span className="EpisodeTitle">PLACEHOLDER AUDIO TRACK</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
