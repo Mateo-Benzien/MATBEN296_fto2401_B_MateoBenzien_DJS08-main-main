@@ -171,11 +171,11 @@ const AudioPlayer = ({ currentEpisode: propCurrentEpisode }) => {
       {currentEpisode ? (
         <div>
           <div className="PlayerControls">
-            <button onClick={skipToPrevious}>⟸</button>
-            <button onClick={rewind}>⟲</button>
+            <button onClick={skipToPrevious}>↻ </button>
+            <button onClick={rewind}>◀ </button>
             <button onClick={playPauseEpisode}>{paused ? '▷' : '||'}</button>
-            <button onClick={fastForward}>⟳</button>
-            <button onClick={skipToNext}>⟹</button>
+            <button onClick={fastForward}>▶</button>
+            <button onClick={skipToNext}>↺</button>
           </div>
           <div className="EpisodeTitle">{currentEpisode.title}</div>
           <PlayerProgress currentTime={currentTime} duration={duration} />
@@ -184,11 +184,11 @@ const AudioPlayer = ({ currentEpisode: propCurrentEpisode }) => {
       ) : (
         <div>
           <div className="PlayerControls">
-            <button onClick={skipToPrevious}>⟸</button>
-            <button onClick={rewind}>⟲</button>
+            <button onClick={skipToPrevious}>↻</button>
+            <button onClick={rewind}>◀ </button>
             <button onClick={playPauseEpisode}>{paused ? '▷' : '||'}</button>
-            <button onClick={fastForward}>⟳</button>
-            <button onClick={skipToNext}>⟹</button>
+            <button onClick={fastForward}> ▶</button>
+            <button onClick={skipToNext}>↺</button>
           </div>
           <div className="EpisodeTitle">PLACEHOLDER AUDIO TRACK</div>
           <PlayerProgress currentTime={currentTime} duration={duration} />

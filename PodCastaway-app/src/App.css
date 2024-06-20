@@ -335,42 +335,77 @@ html {
   font-size: 16px;
 }
 
+/* Enhanced Player styles */
 .Player {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #1e1e1e; /* Dark background for the player */
+  color: white; /* White text color */
+  border: 1px solid #444; /* Dark border */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slightly larger shadow */
   padding: 20px;
   width: 300px;
   max-width: 90%;
   display: flex;
-  flex-direction: column; /* Aligns elements vertically /
+  flex-direction: column; /* Aligns elements vertically */
+  border-radius: 10px; /* Rounded corners */
+  transition: transform 0.3s ease; /* Smooth transition */
+}
+
+.Player:hover {
+  transform: translateY(-5px); /* Lift effect on hover */
 }
 
 .PlayerControls {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px; / Spacing between controls and progress bar */
+  margin-bottom: 15px; /* Increased spacing between controls and progress bar */
 }
 
 .PlayerControls button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 10px 15px;
-  cursor: pointer;
+  background-color: #ff85c4; /* Pink background color */
+  color: white; /* White text color */
+  border: none; /* Remove default border */
+  padding: 10px 15px; /* Padding for button */
+  border-radius: 20px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
+}
+
+.PlayerControls button:hover {
+  background-color: #ff69b4; /* Lighter pink on hover */
+  transform: translateY(-2px); /* Slight lift effect on hover */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
 }
 
 .PlayerProgress {
   width: 100%;
   height: 8px;
-  background-color: #eee;
+  background-color: #444; /* Darker background for progress bar */
+  border-radius: 4px; /* Rounded corners */
+  overflow: hidden; /* Hide overflow for rounded corners */
 }
 
 .PlayerProgress .progress {
   height: 100%;
-  background-color: #007bff;
+  background-color: #ff85c4; /* Pink progress color */
+  transition: width 0.2s ease; /* Smooth transition for progress */
+}
+
+/* Responsive adjustments for player */
+@media (max-width: 576px) {
+  .Player {
+    width: 100%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 0; /* Remove rounded corners for full-width player */
+  }
+
+  .PlayerControls {
+    flex-direction: column; /* Stack controls vertically */
+    gap: 10px; /* Space between buttons */
+  }
 }
