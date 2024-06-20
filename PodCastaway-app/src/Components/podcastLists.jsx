@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { fetchPreviews } from '../services/Api';
 import '../App.css';
 
@@ -83,10 +83,8 @@ const PodcastList = () => {
   return (
     <div className="App">
       <div className="Sidebar">
-        <a href="/">Home</a>
-        <a href="/">Trending</a>
-        <a href="/">Subscriptions</a>
-        <a href="/">Library</a>
+        <Link to="/" className="SidebarLink">Home</Link>
+        <Link to="/favorites" className="SidebarLink">Favorites</Link>
       </div>
       <div className="MainContent">
         <div className="PodcastListContainer">
